@@ -28,7 +28,7 @@ const AppContent = () => {
     setIsLoading(true);
     setResponse("");
     try {
-      const res = await axios.post("http://gameappbackend-i8zv.onrender.com/gemini/ask", { prompt });
+      const res = await axios.post("https://gameappbackend-i8zv.onrender.com/gemini/ask", { prompt });
       setResponse(res.data.reply);
     } catch (err) {
       console.error("Error:", err);

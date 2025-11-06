@@ -6,13 +6,14 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Project from "./pages/Projects";
 import Skills from "./pages/Skills";
+import Footer from "./pages/Footer";
 
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700 text-white">
+      <div>
         <Navbar />
-        <div className="pt-20 px-4 md:px-12">
+        <div>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
@@ -21,6 +22,7 @@ function App() {
             <Route path="/contact" element={<Contact />} />
           </Routes>
         </div>
+        <Footer/>
       </div>
     </Router>
   );

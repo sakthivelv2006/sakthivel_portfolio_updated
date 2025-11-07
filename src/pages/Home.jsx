@@ -93,7 +93,7 @@ export default function Home() {
     setResponse("");
 
     try {
-      const response = await fetch('http://gameappbackend-i8zv.onrender.com/api/gemini/ask', {
+      const response = await fetch('http://localhost:5000/gemini/ask', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

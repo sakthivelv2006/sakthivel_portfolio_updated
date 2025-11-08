@@ -86,34 +86,33 @@ export default function Home() {
 
   // Real Gemini API Call
   const handleAskGemini = async () => {
-    if (!prompt.trim()) return;
-    
-    setIsModalOpen(true);
-    setIsThinking(true);
-    setResponse("");
+  if (!prompt.trim()) return;
 
-    try {
-      const response = await fetch('http://localhost:5000/gemini/ask', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ prompt: prompt })
-      });
+  setIsModalOpen(true);
+  setIsThinking(true);
+  setResponse("");
 
-      if (!response.ok) {
-        throw new Error('Failed to get response from Gemini API');
-      }
+  try {
+    const apiResponse = await fetch('http://localhost:5000/gemini/ask', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt })
+    });
 
-      const data = await response.json();
-      setResponse(data.response || "No response from Gemini");
-    } catch (error) {
-      console.error('Error calling Gemini API:', error);
-      setResponse("Sorry, I couldn't connect to Gemini API. Please try again later.");
-    } finally {
-      setIsThinking(false);
+    if (!apiResponse.ok) {
+      throw new Error('Failed to get response from Gemini API');
     }
-  };
+
+    const data = await apiResponse.json();
+    // ✅ Use the correct property 'reply'
+    setResponse(data.reply || "No response from Gemini");
+  } catch (error) {
+    console.error('Error calling Gemini API:', error);
+    setResponse("Sorry, I couldn't connect to Gemini API. Please try again later.");
+  } finally {
+    setIsThinking(false);
+  }
+};
 
   // Handle Enter key press
   const handleKeyPress = (e) => {

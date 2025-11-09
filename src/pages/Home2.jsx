@@ -506,7 +506,7 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* Add custom styles for fing animation */}
+      {/* Add custom stymation */}
       <style jsx>{`
         @keyframes float {
           0%, 100% { transform: translateY(0px) rotate(0deg); }

@@ -12,9 +12,9 @@ const Footer = () => {
   ];
 
   const socials = [
-    { label: "LinkedIn", icon: <FaLinkedin />, url: "https://linkedin.com" },
-    { label: "GitHub", icon: <FaGithub />, url: "https://github.com" },
-    { label: "LeetCode", icon: <FaCode />, url: "https://leetcode.com" },
+    { label: "LinkedIn", icon: <FaLinkedin />, url: "https://linkedin.com/in/sakthivel2006"},
+    { label: "GitHub", icon: <FaGithub />, url: "https://github.com/sakthivel182006" },
+    { label: "LeetCode", icon: <FaCode />, url: "https://leetcode.com/u/sakthivelv202222/" },
   ];
 
   const handleWhatsAppClick = () => {

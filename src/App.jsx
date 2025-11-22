@@ -37,7 +37,7 @@ function App() {
   if (showSplash) {
     return (
       <div className="relative w-full h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 overflow-hidden">
-        {/* Animated Background */}
+        {/* Animated Bacround */}
         <div className="absolute inset-0">
           <motion.div
             animate={{

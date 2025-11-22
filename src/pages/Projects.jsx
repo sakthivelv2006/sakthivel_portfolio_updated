@@ -13,7 +13,8 @@ import {
   FaCreditCard,
   FaRocket,
   FaStar,
-  FaUserGraduate
+  FaUserGraduate,
+  FaCode
 } from "react-icons/fa";
 
 import project11firstimage from "../assets/projects/project1/projectimage1image.png";
@@ -39,6 +40,12 @@ import project42firstimage from "../assets/projects/project4/project42firstimage
 import project43firstimage from "../assets/projects/project4/project43firstimage.png";
 import project44firstimage from "../assets/projects/project4/project44firstimage.png";
 import project45firstimage from "../assets/projects/project4/project45firstimage.png";
+
+import project51firstimage from "../assets/projects/project5/project51firstimage.png";
+import project52firstimage from "../assets/projects/project5/project52firstimage.png";
+import project53firstimage from "../assets/projects/project5/project53firstimage.png";
+import project54firstimage from "../assets/projects/project5/project54firstimage.png";
+import project55firstimage from "../assets/projects/project5/project55firstimage.png";
 
 const Projects = () => {
   const [selectedProject, setSelectedProject] = useState(null);
@@ -67,6 +74,26 @@ const Projects = () => {
       gradient: "from-purple-500 via-blue-500 to-cyan-500",
       accent: "purple",
       tech: ["Node.js","Express.js","MongoDB","html","Razorpay","Smtp Mail Verification"]
+    },
+    {
+      title: "Sakthivel Online Code Editor",
+      domain: "https://sakthijavacompiler.vercel.app/",
+      description: "Online Code Editor for Java, C++, Python with Real-time Compilation",
+      features: ["Multi-language Support", "Real-time Compilation", "Code Sharing", "Syntax Highlighting", "User-friendly Interface", "Project Management"],
+      roles: [
+        { name: "Admin", icon: FaUsers, color: "from-red-500 to-pink-500" },
+        { name: "Developer", icon: FaCode, color: "from-yellow-500 to-orange-500" }
+      ],
+      images: [
+        project51firstimage,
+        project52firstimage,
+        project53firstimage,
+        project54firstimage,
+        project55firstimage,
+      ],
+      gradient: "from-yellow-500 via-orange-500 to-red-500",
+      accent: "orange",
+      tech: ["React", "Node.js", "Express", "WebAssembly", "Monaco Editor"]
     },
     {
       title: "Social Platform Pro",
@@ -409,10 +436,10 @@ const Projects = () => {
                   whileHover={{ scale: 1.05 }}
                 >
                   <div className="bg-gradient-to-r from-orange-500 to-yellow-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover/feature:shadow-2xl transition-all duration-300">
-                    <FaGraduationCap className="text-2xl" />
+                    <FaCode className="text-2xl" />
                   </div>
-                  <h3 className="font-semibold mb-2 text-lg">E-Learning Systems</h3>
-                  <p className="text-gray-300 text-sm">Advanced educational platforms</p>
+                  <h3 className="font-semibold mb-2 text-lg">Code Compilation</h3>
+                  <p className="text-gray-300 text-sm">Real-time code execution & testing</p>
                 </motion.div>
               </div>
             </div>

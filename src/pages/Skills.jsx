@@ -15,8 +15,8 @@ const Skills = () => {
       icon: <FaCode className="text-4xl" />,
       gradient: "from-purple-500 to-pink-500",
       items: [
-        { name: "Java", icon: <FaJava />, color: "text-red-500" },
-        { name: "C++", icon: <TbBrandCpp />, color: "text-blue-500" },
+        { name: "Java", icon: <FaJava />, color: "text-red-500" }
+        
       ]
     },
     {

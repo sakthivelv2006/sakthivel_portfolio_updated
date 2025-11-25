@@ -24,7 +24,7 @@ const Skills = () => {
       icon: <FaReact className="text-4xl" />,
       gradient: "from-blue-500 to-cyan-500",
       items: [
-        { name: "HTML & CSS", icon: <><FaHtml5 /><FaCss3Alt /></>, color: "text-orange-500" },
+        { name: "HTML", icon: <><FaHtml5 /><FaCss3Alt /></>, color: "text-orange-500" },
         { name: "React", icon: <FaReact />, color: "text-cyan-400" },
         { name: "Android Studio", icon: <FaAndroid />, color: "text-green-500" },
         { name: "Flutter", icon: <FaMobile />, color: "text-blue-400" }

@@ -85,7 +85,7 @@ const Github = () => {
       </div>
 
       <p className="mt-4 text-green-400 text-lg">
-        Total Contributions: {calendar.totalContributions}
+        Total Contions: {calendar.totalContributions}
       </p>
     </div>
   );

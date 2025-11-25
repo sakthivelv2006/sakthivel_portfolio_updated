@@ -217,7 +217,7 @@ const About = () => {
                 <div className="space-y-3 text-gray-300">
                   <p className="flex items-center gap-2">
                     <span className="w-2 h-2 bg-cyan-400 rounded-full"></span>
-                    <span><strong className="text-cyan-400">Frontend:</strong> React, HTML5, CSS3, JavaScript</span>
+                    <span><strong className="text-cyan-400">Frontend:</strong> React, HTML5, JavaScript</span>
                   </p>
                   <p className="flex items-center gap-2">
                     <span className="w-2 h-2 bg-green-400 rounded-full"></span>
@@ -229,7 +229,7 @@ const About = () => {
                   </p>
                   <p className="flex items-center gap-2">
                     <span className="w-2 h-2 bg-yellow-400 rounded-full"></span>
-                    <span><strong className="text-yellow-400">Mobile:</strong> Android, Flutter</span>
+                    <span><strong className="text-yellow-400">Mobile:</strong> Android, Flutter(Using AI)</span>
                   </p>
                   <p className="flex items-center gap-2">
                     <span className="w-2 h-2 bg-pink-400 rounded-full"></span>

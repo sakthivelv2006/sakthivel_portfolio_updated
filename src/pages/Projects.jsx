@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from "framer-motion";
 import { 
   FaGlobe, 
   FaDownload, 
@@ -17,6 +17,7 @@ import {
   FaCode
 } from "react-icons/fa";
 
+// Import your images (Keep exactly as provided)
 import project11firstimage from "../assets/projects/project1/projectimage1image.png";
 import project12firstimage from "../assets/projects/project1/projectimage2image.png";
 import project13firstimage from "../assets/projects/project1/projectimage3image.png";
@@ -47,10 +48,116 @@ import project53firstimage from "../assets/projects/project5/project53firstimage
 import project54firstimage from "../assets/projects/project5/project54firstimage.png";
 import project55firstimage from "../assets/projects/project5/project55firstimage.png";
 
+// --- REUSABLE 3D TILT CARD COMPONENT ---
+const TiltCard = ({ children, className, onClick }) => {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const mouseX = useSpring(x, { stiffness: 300, damping: 30 });
+  const mouseY = useSpring(y, { stiffness: 300, damping: 30 });
+
+  const rotateX = useTransform(mouseY, [-0.5, 0.5], ["15deg", "-15deg"]);
+  const rotateY = useTransform(mouseX, [-0.5, 0.5], ["-15deg", "15deg"]);
+  
+  const glareX = useTransform(mouseX, [-0.5, 0.5], ["0%", "100%"]);
+  const glareY = useTransform(mouseY, [-0.5, 0.5], ["0%", "100%"]);
+
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    const mouseXFromCenter = e.clientX - rect.left - width / 2;
+    const mouseYFromCenter = e.clientY - rect.top - height / 2;
+    x.set(mouseXFromCenter / width);
+    y.set(mouseYFromCenter / height);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  return (
+    <motion.div
+      style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      onClick={onClick}
+      className={`relative h-full transition-all duration-200 ease-linear perspective-1000 ${className}`}
+    >
+      <div className="relative h-full w-full rounded-[24px] shadow-2xl transition-all duration-300 group" style={{ transformStyle: "preserve-3d" }}>
+        {/* Glare Effect */}
+        <motion.div 
+            style={{ 
+                background: `radial-gradient(circle at ${glareX}% ${glareY}%, rgba(255,255,255,0.3), transparent 50%)`,
+                transform: "translateZ(1px)"
+            }}
+            className="absolute inset-0 rounded-[24px] z-50 pointer-events-none mix-blend-overlay opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        />
+        {children}
+      </div>
+    </motion.div>
+  );
+};
+
 const Projects = () => {
   const [selectedProject, setSelectedProject] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [hoveredProject, setHoveredProject] = useState(null);
+
+  // Canvas Refs for Starry Background
+  const canvasRef = useRef(null);
+  const rafRef = useRef(null);
+  const starsRef = useRef([]);
+
+  // Starry Background Logic
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resize();
+    window.addEventListener("resize", resize);
+
+    const stars = [];
+    for (let i = 0; i < 300; i++) {
+      stars.push({
+        x: Math.random() * canvas.width - canvas.width / 2,
+        y: Math.random() * canvas.height - canvas.height / 2,
+        z: Math.random() * canvas.width,
+        speed: 0.5 + Math.random() * 1,
+      });
+    }
+    starsRef.current = stars;
+
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height); 
+      ctx.save();
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      for (let s of starsRef.current) {
+        s.z -= s.speed;
+        if (s.z <= 0) s.z = canvas.width;
+        const k = 400 / s.z;
+        const x = s.x * k;
+        const y = s.y * k;
+        const size = (1 - s.z / canvas.width) * 3;
+        
+        ctx.fillStyle = "white";
+        ctx.beginPath();
+        ctx.arc(x, y, size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+      rafRef.current = requestAnimationFrame(draw);
+    };
+    draw();
+    return () => {
+      cancelAnimationFrame(rafRef.current);
+      window.removeEventListener("resize", resize);
+    };
+  }, []);
 
   const projectData = [
     {
@@ -210,13 +317,21 @@ const Projects = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-cyan-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-pulse animation-delay-4000"></div>
-        <div className="absolute top-20 right-1/4 w-40 h-40 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-15 animate-bounce animation-delay-1000"></div>
-        <div className="absolute bottom-20 left-1/4 w-40 h-40 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl opacity-15 animate-bounce animation-delay-3000"></div>
+    <div className="min-h-screen bg-slate-900 py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden perspective-2000">
+      
+      {/* --- BACKGROUND EFFECTS --- */}
+      <canvas ref={canvasRef} className="fixed inset-0 w-full h-full pointer-events-none z-0 opacity-80" />
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <motion.div
+          animate={{ x: [0, 100, 0], y: [0, -50, 0] }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          className="absolute -top-40 -right-40 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl"
+        />
+        <motion.div
+          animate={{ x: [0, -100, 0], y: [0, 50, 0] }}
+          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+          className="absolute -bottom-40 -left-40 w-96 h-96 bg-cyan-600/20 rounded-full blur-3xl"
+        />
       </div>
 
       <motion.div
@@ -226,16 +341,15 @@ const Projects = () => {
         className="relative z-10 max-w-7xl mx-auto"
       >
         <motion.div variants={itemVariants} className="text-center mb-16">
-          
           <motion.h1 
-            className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent mb-6"
+            className="text-5xl md:text-7xl font-black bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent mb-6 drop-shadow-lg"
             whileHover={{ scale: 1.02 }}
             transition={{ type: "spring", stiffness: 300 }}
           >
-            Welcome to My Projects
+            My Projects
           </motion.h1>
           <motion.p 
-            className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed"
+            className="text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed font-light"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8 }}
@@ -245,215 +359,158 @@ const Projects = () => {
           </motion.p>
         </motion.div>
 
+        {/* 3D PROJECT GRID */}
         <motion.div 
           variants={containerVariants}
-          className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-20"
+          className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-20"
         >
           {projectData.map((project, index) => (
-            <motion.div
-              key={index}
-              variants={itemVariants}
-              whileHover={{ 
-                scale: 1.02,
-                rotateY: 5,
-                transition: { duration: 0.3 }
-              }}
-              onHoverStart={() => setHoveredProject(index)}
-              onHoverEnd={() => setHoveredProject(null)}
-              className="group cursor-pointer"
-            >
-              <div className={`relative h-full bg-gradient-to-br ${project.gradient} p-1 rounded-3xl shadow-2xl transform-style-3d perspective-1000 hover:shadow-3xl transition-all duration-500`}>
-                <div className="relative bg-slate-800 rounded-2xl p-6 h-full transform transition-all duration-500 group-hover:rotate-x-2 group-hover:translate-z-10 backface-hidden overflow-hidden">
+            <TiltCard key={index} className="group cursor-pointer">
+              <div className={`relative h-full bg-gradient-to-br ${project.gradient} p-[2px] rounded-[30px] shadow-2xl overflow-hidden`}>
+                <div className="relative bg-slate-900 rounded-[28px] p-8 h-full overflow-hidden">
                   
-                  <div className="text-center mb-6">
-                    <motion.h3 
-                      className="text-2xl md:text-3xl font-bold text-white mb-3"
-                      whileHover={{ scale: 1.03 }}
-                    >
+                  {/* Gloss Effect */}
+                  <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{transform: "translateZ(10px)"}} />
+
+                  <div className="text-center mb-6" style={{ transform: "translateZ(40px)" }}>
+                    <h3 className="text-2xl md:text-3xl font-bold text-white mb-3 tracking-wide">
                       {project.title}
-                    </motion.h3>
-                    <p className="text-gray-300 text-sm md:text-base mb-4 leading-relaxed">
+                    </h3>
+                    <p className="text-gray-400 text-sm md:text-base mb-4 leading-relaxed">
                       {project.description}
                     </p>
                   </div>
 
-                  <motion.div 
-                    className="relative rounded-2xl overflow-hidden mb-6 shadow-2xl group/image"
-                    whileHover={{ scale: 1.03 }}
-                    transition={{ type: "spring", stiffness: 300 }}
+                  <div 
+                    className="relative rounded-2xl overflow-hidden mb-6 shadow-2xl group/image border border-white/10"
+                    style={{ transform: "translateZ(30px)" }}
                   >
                     <img
                       src={project.images[0]}
                       alt={project.title}
-                      className="w-full h-48 md:h-56 object-cover transform group-hover/image:scale-110 transition-transform duration-700"
+                      className="w-full h-48 md:h-64 object-cover transform group-hover/image:scale-110 transition-transform duration-700"
                     />
-                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover/image:bg-opacity-40 transition-all duration-500 flex items-center justify-center">
-                      <motion.div
-                        initial={{ scale: 0, opacity: 0 }}
-                        whileHover={{ scale: 1, opacity: 1 }}
-                        className="bg-white bg-opacity-20 rounded-full p-4 backdrop-blur-sm border border-white border-opacity-30"
-                      >
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/image:opacity-100 transition-all duration-500 flex items-center justify-center backdrop-blur-[2px]">
+                      <div className="bg-white/20 rounded-full p-4 backdrop-blur-md border border-white/30 hover:scale-110 transition-transform">
                         <FaPlay className="text-white text-xl md:text-2xl" />
-                      </motion.div>
+                      </div>
                     </div>
-                    <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-slate-900 to-transparent"></div>
-                  </motion.div>
+                  </div>
 
-                  <div className="flex flex-wrap gap-2 justify-center mb-4">
+                  <div className="flex flex-wrap gap-2 justify-center mb-4" style={{ transform: "translateZ(25px)" }}>
                     {project.roles.map((role, i) => (
-                      <motion.span
+                      <span
                         key={i}
-                        whileHover={{ scale: 1.1, y: -2 }}
-                        className={`bg-gradient-to-r ${role.color} text-white text-xs px-3 py-2 rounded-full flex items-center gap-2 shadow-lg border border-white border-opacity-20`}
+                        className={`bg-gradient-to-r ${role.color} text-white text-[10px] uppercase font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg`}
                       >
                         <role.icon className="text-xs" />
-                        <span className="font-medium">{role.name}</span>
-                      </motion.span>
+                        <span>{role.name}</span>
+                      </span>
                     ))}
                   </div>
 
-                  <div className="flex flex-wrap gap-2 justify-center mb-6">
+                  <div className="flex flex-wrap gap-2 justify-center mb-8" style={{ transform: "translateZ(20px)" }}>
                     {project.tech.map((tech, i) => (
-                      <motion.span 
+                      <span 
                         key={i}
-                        whileHover={{ scale: 1.05, y: -1 }}
-                        className="bg-slate-700 text-gray-300 text-xs px-3 py-1 rounded-lg border border-slate-600 hover:border-slate-500 transition-colors"
+                        className="bg-white/5 text-gray-300 text-xs px-3 py-1 rounded-lg border border-white/5 hover:bg-white/10 transition-colors"
                       >
                         {tech}
-                      </motion.span>
+                      </span>
                     ))}
                   </div>
 
-                  <div className="flex gap-3">
-                    <motion.button
-                      whileHover={{ scale: 1.05, y: -2 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => openProjectModal(project, 0)}
-                      className="flex-1 bg-gradient-to-r from-purple-500 to-cyan-500 text-white py-3 rounded-xl font-semibold flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transition-all duration-300 group/btn"
+                  <div className="flex gap-4" style={{ transform: "translateZ(35px)" }}>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); openProjectModal(project, 0); }}
+                      className="flex-1 bg-gradient-to-r from-purple-600 to-cyan-600 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg hover:shadow-cyan-500/30 transition-all duration-300 hover:scale-105"
                     >
-                      <FaPlay className="group-hover/btn:scale-110 transition-transform" />
-                      <span>View Demo</span>
-                    </motion.button>
-                    <motion.a
-                      whileHover={{ scale: 1.05, y: -2 }}
-                      whileTap={{ scale: 0.95 }}
+                      <FaPlay /> Demo
+                    </button>
+                    <a
                       href={project.domain}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="bg-slate-700 text-white p-3 rounded-xl hover:bg-slate-600 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center"
+                      onClick={(e) => e.stopPropagation()}
+                      className="px-4 bg-slate-800 text-white border border-white/20 rounded-xl hover:bg-slate-700 transition-all duration-300 flex items-center justify-center hover:scale-105"
                     >
-                      <FaGlobe className="text-lg" />
-                    </motion.a>
+                      <FaGlobe className="text-xl" />
+                    </a>
                   </div>
 
                   {project.androidDownload && project.windowsDownload && (
-                    <motion.div 
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ 
+                    <div 
+                      className="mt-4 overflow-hidden" 
+                      style={{ 
                         opacity: hoveredProject === index ? 1 : 0,
-                        height: hoveredProject === index ? "auto" : 0
+                        height: hoveredProject === index ? "auto" : 0,
+                        transition: "all 0.3s ease",
+                        transform: "translateZ(20px)"
                       }}
-                      className="mt-4 overflow-hidden"
                     >
-                      <div className="flex gap-2">
-                        <motion.a
+                      <div className="flex gap-2 pt-2 border-t border-white/10">
+                        <a
                           href={project.androidDownload}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex-1 bg-green-500 text-white py-2 rounded-lg text-sm flex items-center justify-center gap-2 hover:bg-green-600 transition-all duration-300 shadow-lg"
-                          whileHover={{ scale: 1.02, y: -1 }}
+                          onClick={(e) => e.stopPropagation()}
+                          className="flex-1 bg-green-600 text-white py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-2 hover:bg-green-500 transition-colors"
                         >
-                          <FaAndroid />
-                          Android APK
-                        </motion.a>
-                        <motion.a
+                          <FaAndroid /> APK
+                        </a>
+                        <a
                           href={project.windowsDownload}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex-1 bg-blue-500 text-white py-2 rounded-lg text-sm flex items-center justify-center gap-2 hover:bg-blue-600 transition-all duration-300 shadow-lg"
-                          whileHover={{ scale: 1.02, y: -1 }}
+                          onClick={(e) => e.stopPropagation()}
+                          className="flex-1 bg-blue-600 text-white py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-2 hover:bg-blue-500 transition-colors"
                         >
-                          <FaWindows />
-                          Windows App
-                        </motion.a>
+                          <FaWindows /> EXE
+                        </a>
                       </div>
-                    </motion.div>
+                    </div>
                   )}
                 </div>
-
-                <div className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${project.gradient} opacity-0 group-hover:opacity-30 blur-xl transition-opacity duration-500 -z-10`}></div>
-                
-                <div className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${project.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-5`}>
-                  <div className="absolute inset-0 rounded-3xl bg-slate-900 m-1"></div>
-                </div>
               </div>
-            </motion.div>
+            </TiltCard>
           ))}
         </motion.div>
 
-        <motion.div variants={itemVariants} className="text-center">
-          <motion.div
-            whileHover={{ scale: 1.02, y: -5 }}
-            className="inline-block bg-gradient-to-r from-purple-500 to-cyan-500 p-1 rounded-3xl shadow-2xl"
-          >
-            <div className="bg-slate-800 rounded-2xl p-8 md:p-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-8">
-                🚀 Advanced Features Included
-              </h2>
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 text-white">
-                <motion.div 
-                  className="text-center group/feature"
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <div className="bg-gradient-to-r from-purple-500 to-pink-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover/feature:shadow-2xl transition-all duration-300">
-                    <FaCreditCard className="text-2xl" />
-                  </div>
-                  <h3 className="font-semibold mb-2 text-lg">Payment Integration</h3>
-                  <p className="text-gray-300 text-sm">Secure payment processing systems</p>
-                </motion.div>
-                <motion.div 
-                  className="text-center group/feature"
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <div className="bg-gradient-to-r from-blue-500 to-cyan-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover/feature:shadow-2xl transition-all duration-300">
-                    <FaUsers className="text-2xl" />
-                  </div>
-                  <h3 className="font-semibold mb-2 text-lg">Multi-role Access</h3>
-                  <p className="text-gray-300 text-sm">Advanced role-based permissions</p>
-                </motion.div>
-                <motion.div 
-                  className="text-center group/feature"
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <div className="bg-gradient-to-r from-green-500 to-teal-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover/feature:shadow-2xl transition-all duration-300">
-                    <FaRocket className="text-2xl" />
-                  </div>
-                  <h3 className="font-semibold mb-2 text-lg">Modern Tech Stack</h3>
-                  <p className="text-gray-300 text-sm">Latest technologies & frameworks</p>
-                </motion.div>
-                <motion.div 
-                  className="text-center group/feature"
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <div className="bg-gradient-to-r from-orange-500 to-yellow-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover/feature:shadow-2xl transition-all duration-300">
-                    <FaCode className="text-2xl" />
-                  </div>
-                  <h3 className="font-semibold mb-2 text-lg">Code Compilation</h3>
-                  <p className="text-gray-300 text-sm">Real-time code execution & testing</p>
-                </motion.div>
+        {/* Features Section */}
+        <motion.div variants={itemVariants} className="text-center pb-20">
+          <TiltCard className="inline-block w-full max-w-5xl">
+            <div className="bg-gradient-to-r from-purple-500 to-cyan-500 p-[2px] rounded-[32px] shadow-2xl">
+              <div className="bg-slate-900 rounded-[30px] p-8 md:p-12">
+                <h2 className="text-3xl md:text-4xl font-bold text-white mb-10 tracking-wide" style={{ transform: "translateZ(30px)" }}>
+                  🚀 Advanced Capabilities
+                </h2>
+                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 text-white">
+                  {[
+                    { icon: FaCreditCard, title: "Payments", desc: "Secure Processing", color: "from-purple-500 to-pink-500" },
+                    { icon: FaUsers, title: "Access Control", desc: "RBAC Systems", color: "from-blue-500 to-cyan-500" },
+                    { icon: FaRocket, title: "Modern Stack", desc: "Latest Frameworks", color: "from-green-500 to-teal-500" },
+                    { icon: FaCode, title: "Compilers", desc: "Real-time Exec", color: "from-orange-500 to-yellow-500" }
+                  ].map((feat, i) => (
+                    <div key={i} className="text-center group/feature" style={{ transform: "translateZ(20px)" }}>
+                      <div className={`bg-gradient-to-r ${feat.color} w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover/feature:scale-110 transition-transform duration-300`}>
+                        <feat.icon className="text-2xl text-white" />
+                      </div>
+                      <h3 className="font-bold mb-1 text-lg">{feat.title}</h3>
+                      <p className="text-slate-400 text-xs uppercase tracking-wider">{feat.desc}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-          </motion.div>
+          </TiltCard>
         </motion.div>
       </motion.div>
 
+      {/* MODAL */}
       <AnimatePresence>
         {selectedProject && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center z-50 p-4"
+          <div
+            className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-4"
             onClick={closeProjectModal}
           >
             <motion.div
@@ -461,183 +518,88 @@ const Projects = () => {
               animate={{ scale: 1, opacity: 1, rotateX: 0 }}
               exit={{ scale: 0.8, opacity: 0, rotateX: 15 }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="bg-slate-800 rounded-3xl max-w-6xl w-full max-h-[95vh] overflow-hidden transform-style-3d perspective-1000 shadow-2xl border border-slate-700"
+              className="bg-slate-900 rounded-3xl max-w-6xl w-full max-h-[90vh] overflow-hidden shadow-2xl border border-slate-700 flex flex-col"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="relative">
-                <motion.button
-                  whileHover={{ scale: 1.1, rotate: 90 }}
-                  whileTap={{ scale: 0.9 }}
+              <div className="relative flex-1 overflow-y-auto custom-scrollbar">
+                <button
                   onClick={closeProjectModal}
-                  className="absolute top-6 right-6 z-10 bg-slate-700 rounded-full p-3 shadow-2xl hover:bg-slate-600 transition-all duration-300 border border-slate-600"
+                  className="absolute top-4 right-4 z-20 bg-black/50 hover:bg-red-500 text-white rounded-full p-2 transition-colors"
                 >
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </motion.button>
+                  <FaTimes />
+                </button>
 
-                <div className="relative">
+                {/* Image Slider */}
+                <div className="relative h-64 sm:h-80 md:h-[500px] bg-black">
                   <motion.img
                     key={currentImageIndex}
-                    initial={{ opacity: 0, scale: 1.1 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
                     src={selectedProject.images[currentImageIndex]}
-                    alt={`${selectedProject.title} ${currentImageIndex + 1}`}
-                    className="w-full h-64 sm:h-80 md:h-96 object-cover"
+                    alt="Project Preview"
+                    className="w-full h-full object-contain"
                   />
                   
-                  <motion.button
-                    whileHover={{ scale: 1.1, x: -5 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={prevImage}
-                    className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-slate-700 rounded-full p-4 shadow-2xl hover:bg-slate-600 transition-all duration-300 border border-slate-600"
-                  >
-                    <FaArrowLeft className="text-white text-xl" />
-                  </motion.button>
-
-                  <motion.button
-                    whileHover={{ scale: 1.1, x: 5 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={nextImage}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-slate-700 rounded-full p-4 shadow-2xl hover:bg-slate-600 transition-all duration-300 border border-slate-600"
-                  >
-                    <FaArrowRight className="text-white text-xl" />
-                  </motion.button>
-
-                  <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-50 text-white px-3 py-1 rounded-full text-sm backdrop-blur-sm">
+                  <button onClick={prevImage} className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 p-3 rounded-full text-white hover:bg-white/20 transition">
+                    <FaArrowLeft />
+                  </button>
+                  <button onClick={nextImage} className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 p-3 rounded-full text-white hover:bg-white/20 transition">
+                    <FaArrowRight />
+                  </button>
+                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 px-3 py-1 rounded-full text-xs text-white">
                     {currentImageIndex + 1} / {selectedProject.images.length}
                   </div>
                 </div>
 
-                <div className="p-6 md:p-8">
+                {/* Content */}
+                <div className="p-8">
                   <div className="flex flex-col lg:flex-row gap-8">
                     <div className="flex-1">
-                      <motion.h3 
-                        className="text-3xl md:text-4xl font-bold text-white mb-4"
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.2 }}
-                      >
-                        {selectedProject.title}
-                      </motion.h3>
-                      
-                      <motion.p 
-                        className="text-gray-300 mb-6 text-lg leading-relaxed"
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.3 }}
-                      >
-                        {selectedProject.description}
-                      </motion.p>
+                      <h3 className="text-3xl font-bold text-white mb-2">{selectedProject.title}</h3>
+                      <p className="text-slate-400 mb-6 text-lg">{selectedProject.description}</p>
 
-                      <motion.div
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.4 }}
-                        className="mb-6"
-                      >
-                        <h4 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-                          <FaStar className="text-yellow-400" />
-                          Key Features:
-                        </h4>
+                      <div className="mb-6">
+                        <h4 className="text-white font-bold mb-3 flex items-center gap-2"><FaStar className="text-yellow-400"/> Key Features</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          {selectedProject.features.map((feature, index) => (
-                            <motion.div
-                              key={index}
-                              whileHover={{ scale: 1.02, x: 5 }}
-                              className="flex items-center gap-3 text-gray-300 bg-slate-700 p-3 rounded-lg border border-slate-600 hover:border-slate-500 transition-all duration-200"
-                            >
-                              <div className="w-2 h-2 bg-cyan-500 rounded-full"></div>
-                              <span className="text-sm md:text-base">{feature}</span>
-                            </motion.div>
+                          {selectedProject.features.map((f, i) => (
+                            <div key={i} className="flex items-center gap-2 text-slate-300 bg-slate-800 p-3 rounded-lg border border-slate-700">
+                              <div className="w-1.5 h-1.5 bg-cyan-500 rounded-full"></div>
+                              <span className="text-sm">{f}</span>
+                            </div>
                           ))}
                         </div>
-                      </motion.div>
+                      </div>
                     </div>
 
-                    <div className="lg:w-2/5">
-                      <motion.div
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.5 }}
-                        className="mb-6"
-                      >
-                        <h4 className="text-lg font-semibold text-white mb-3">Project Screenshots:</h4>
-                        <div className="grid grid-cols-3 gap-3">
-                          {selectedProject.images.map((img, i) => (
-                            <motion.div
-                              key={i}
-                              whileHover={{ scale: 1.1, y: -2 }}
-                              whileTap={{ scale: 0.95 }}
-                              className={`overflow-hidden rounded-xl cursor-pointer transition-all duration-200 ${
-                                i === currentImageIndex 
-                                  ? 'ring-2 ring-cyan-500 ring-offset-2 ring-offset-slate-800 transform scale-105' 
-                                  : 'opacity-70 hover:opacity-100'
-                              }`}
-                              onClick={() => setCurrentImageIndex(i)}
-                            >
-                              <img
-                                src={img}
-                                alt={`${selectedProject.title} ${i + 1}`}
-                                className="w-full h-20 object-cover hover:scale-110 transition-transform duration-300"
-                              />
-                            </motion.div>
-                          ))}
+                    <div className="lg:w-1/3 space-y-6">
+                        <div>
+                            <h4 className="text-white font-bold mb-3">Technologies</h4>
+                            <div className="flex flex-wrap gap-2">
+                                {selectedProject.tech.map((t, i) => (
+                                    <span key={i} className="bg-slate-800 text-cyan-400 text-xs px-3 py-1 rounded-full border border-cyan-500/30">
+                                        {t}
+                                    </span>
+                                ))}
+                            </div>
                         </div>
-                      </motion.div>
 
-                      <motion.div
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.6 }}
-                        className="space-y-3"
-                      >
-                        <motion.a
-                          href={selectedProject.domain}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          whileHover={{ scale: 1.02, y: -2 }}
-                          whileTap={{ scale: 0.98 }}
-                          className="w-full bg-gradient-to-r from-purple-500 to-cyan-500 text-white py-4 rounded-xl font-semibold flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transition-all duration-300 text-lg"
-                        >
-                          <FaGlobe />
-                          Visit Live Website
-                        </motion.a>
-                        
-                        {selectedProject.androidDownload && selectedProject.windowsDownload && (
-                          <>
-                            <motion.a
-                              href={selectedProject.androidDownload}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              whileHover={{ scale: 1.02, y: -2 }}
-                              whileTap={{ scale: 0.98 }}
-                              className="w-full bg-green-500 text-white py-3 rounded-xl font-semibold flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transition-all duration-300"
-                            >
-                              <FaAndroid />
-                              Download Android APK
-                            </motion.a>
-                            <motion.a
-                              href={selectedProject.windowsDownload}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              whileHover={{ scale: 1.02, y: -2 }}
-                              whileTap={{ scale: 0.98 }}
-                              className="w-full bg-blue-500 text-white py-3 rounded-xl font-semibold flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transition-all duration-300"
-                            >
-                              <FaWindows />
-                              Download Windows App
-                            </motion.a>
-                          </>
-                        )}
-                      </motion.div>
+                        <div className="flex flex-col gap-3">
+                            <a href={selectedProject.domain} target="_blank" rel="noreferrer" className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 transition">
+                                <FaGlobe /> Visit Site
+                            </a>
+                            {selectedProject.androidDownload && (
+                                <a href={selectedProject.androidDownload} target="_blank" rel="noreferrer" className="w-full bg-green-600 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 transition">
+                                    <FaAndroid /> Android App
+                                </a>
+                            )}
+                        </div>
                     </div>
                   </div>
                 </div>
               </div>
             </motion.div>
-          </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </div>

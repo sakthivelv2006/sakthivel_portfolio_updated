@@ -15,18 +15,18 @@ function App() {
 
   useEffect(() => {
     const progressInterval = setInterval(() => {
-      setLoadingProgress(prev => {
+      setLoadingProgress((prev) => {
         if (prev >= 100) {
           clearInterval(progressInterval);
           return 100;
         }
         return prev + 2;
       });
-    }, 80);
+    }, 50); // Slightly faster loading for better UX
 
     const timer = setTimeout(() => {
       setShowSplash(false);
-    }, 4000);
+    }, 3500); // Adjusted total time to match loading speed
 
     return () => {
       clearInterval(progressInterval);
@@ -36,228 +36,142 @@ function App() {
 
   if (showSplash) {
     return (
-      <div className="relative w-full h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 overflow-hidden">
-        {/* Animated Bacround */}
-        <div className="absolute inset-0">
-          <motion.div
-            animate={{
-              scale: [1, 1.2, 1],
-              opacity: [0.3, 0.6, 0.3],
-            }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-            className="absolute top-1/4 left-1/4 w-64 h-64 bg-purple-500 rounded-full blur-3xl"
-          />
-          <motion.div
-            animate={{
-              scale: [1.2, 1, 1.2],
-              opacity: [0.4, 0.7, 0.4],
-            }}
-            transition={{
-              duration: 5,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-            className="absolute bottom-1/4 right-1/4 w-72 h-72 bg-cyan-500 rounded-full blur-3xl"
-          />
-        </div>
+      <div className="relative w-full h-screen bg-slate-900 overflow-hidden flex flex-col items-center justify-center">
+        {/* Animated Background Gradient */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-900 via-slate-900 to-black opacity-80" />
 
-        {/* Floating Particles */}
-        {[...Array(20)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-2 h-2 bg-white rounded-full opacity-20"
-            animate={{
-              y: [0, -100, 0],
-              x: [0, Math.sin(i) * 50, 0],
-              scale: [0, 1, 0],
-            }}
-            transition={{
-              duration: 3 + i * 0.3,
-              repeat: Infinity,
-              delay: i * 0.2,
-            }}
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-          />
-        ))}
-
-        {/* Main Content */}
-        <div className="relative z-10 flex flex-col items-center justify-center h-full">
-          {/* Logo/Brand */}
-          <motion.div
-            initial={{ scale: 0, rotate: -180 }}
-            animate={{ scale: 1, rotate: 0 }}
-            transition={{
-              type: "spring",
-              stiffness: 200,
-              damping: 15
-            }}
-            className="mb-8"
-          >
-            <div className="relative">
-              <motion.div
-                animate={{
-                  rotate: [0, 360],
-                }}
-                transition={{
-                  duration: 8,
-                  repeat: Infinity,
-                  ease: "linear"
-                }}
-                className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 rounded-full blur-lg"
-              />
-              <div className="relative bg-slate-900 rounded-full p-6 border border-white/20">
-                <motion.div
-                  animate={{
-                    scale: [1, 1.1, 1],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                  className="w-16 h-16 bg-gradient-to-r from-cyan-400 to-purple-400 rounded-full flex items-center justify-center"
-                >
-                  <span className="text-white font-bold text-lg">SV</span>
-                </motion.div>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Main Text */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 1 }}
-            className="text-center"
-          >
-            <motion.h1
-              className="text-6xl md:text-8xl font-black mb-4 bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent"
+        {/* Floating Particles/Stars */}
+        <div className="absolute inset-0 overflow-hidden">
+          {[...Array(30)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute bg-white rounded-full opacity-20"
+              initial={{
+                x: Math.random() * window.innerWidth,
+                y: Math.random() * window.innerHeight,
+                scale: Math.random() * 0.5 + 0.5,
+              }}
               animate={{
-                backgroundPosition: ["0%", "100%", "0%"],
+                y: [null, Math.random() * -100],
+                opacity: [0.2, 0.5, 0.2],
               }}
               transition={{
-                duration: 3,
+                duration: Math.random() * 5 + 5,
                 repeat: Infinity,
-                ease: "linear"
+                ease: "linear",
               }}
               style={{
-                backgroundSize: "200% 200%",
+                width: Math.random() * 4 + 1 + "px",
+                height: Math.random() * 4 + 1 + "px",
               }}
-            >
-              SAKTHIDEV
-            </motion.h1>
-            
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1, duration: 1 }}
-              className="text-xl text-gray-300 font-light tracking-widest uppercase"
-            >
-              Full Stack Developer
-            </motion.p>
+            />
+          ))}
+        </div>
+
+        {/* Glowing Orbs Background */}
+        <motion.div
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.3, 0.5, 0.3],
+          }}
+          transition={{
+            duration: 4,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+          className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-600 rounded-full blur-[128px] opacity-20"
+        />
+        <motion.div
+          animate={{
+            scale: [1.2, 1, 1.2],
+            opacity: [0.3, 0.5, 0.3],
+          }}
+          transition={{
+            duration: 5,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+          className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyan-600 rounded-full blur-[128px] opacity-20"
+        />
+
+        {/* Main Content */}
+        <div className="relative z-10 text-center px-4 w-full max-w-4xl mx-auto">
+          {/* Main Title: DEVSAKTHI */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8, filter: "blur(10px)" }}
+            animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+            transition={{ duration: 1.2, ease: "easeOut" }}
+            className="mb-12"
+          >
+            <h1 className="text-5xl md:text-8xl lg:text-9xl font-black tracking-tighter">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 drop-shadow-[0_0_15px_rgba(168,85,247,0.5)]">
+                DEV
+              </span>
+              <span className="text-white drop-shadow-[0_0_25px_rgba(255,255,255,0.3)]">
+                SAKTHI
+              </span>
+            </h1>
           </motion.div>
 
-          {/* Loading Bar */}
-          <motion.div
-            initial={{ opacity: 0, width: 0 }}
-            animate={{ opacity: 1, width: "300px" }}
-            transition={{ delay: 1.5, duration: 1 }}
-            className="mt-12 w-80 max-w-sm"
-          >
-            <div className="flex justify-between text-sm text-gray-400 mb-2">
-              <span>Loading Portfolio</span>
+          {/* Attractive Loading Bar */}
+          <div className="relative w-full max-w-md mx-auto">
+            {/* Percentage Text */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex justify-between text-xs md:text-sm text-cyan-300 font-mono mb-2 tracking-widest uppercase"
+            >
+              <span>Loading</span>
               <span>{loadingProgress}%</span>
-            </div>
-            <div className="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
+            </motion.div>
+
+            {/* Progress Bar Container */}
+            <div className="h-2 md:h-3 w-full bg-slate-800/50 rounded-full overflow-hidden border border-white/10 backdrop-blur-sm">
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${loadingProgress}%` }}
-                transition={{ duration: 0.5 }}
-                className="h-full bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full relative"
+                transition={{ ease: "linear", duration: 0.1 }}
+                className="h-full bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 relative"
               >
-                <motion.div
-                  animate={{
-                    x: ["0%", "100%", "0%"],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12"
-                />
+                {/* Shining Effect on Bar */}
+                <div className="absolute inset-0 bg-white/30 w-full h-full animate-[shimmer_2s_infinite]" />
+                
+                {/* Glow at the tip of the bar */}
+                <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full blur-[4px] shadow-[0_0_10px_#fff]" />
               </motion.div>
             </div>
-          </motion.div>
 
-          {/* Tech Stack Icons */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 2, duration: 1 }}
-            className="mt-8 flex gap-6 text-2xl text-gray-400"
-          >
-            {["⚛️", "💻", "🚀", "🎯", "🔥"].map((icon, index) => (
-              <motion.span
-                key={index}
-                animate={{
-                  y: [0, -10, 0],
-                  scale: [1, 1.2, 1],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  delay: index * 0.2,
-                }}
-                className="backdrop-blur-lg bg-white/5 p-3 rounded-xl border border-white/10"
-              >
-                {icon}
-              </motion.span>
-            ))}
-          </motion.div>
-
-          {/* Welcome Message */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 2.5, duration: 1 }}
-            className="mt-8 text-center"
-          >
-            <p className="text-gray-400 text-sm font-light">
-              Crafting digital experiences with passion and precision
-            </p>
-          </motion.div>
+            {/* Status Text */}
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="mt-4 text-slate-500 text-xs tracking-wider"
+            >
+              {loadingProgress < 30 && "Loading assets..."}
+              {loadingProgress >= 30 && loadingProgress < 70 && "Connecting to server..."}
+              {loadingProgress >= 70 && "Starting application..."}
+            </motion.p>
+          </div>
         </div>
 
-        {/* Copyright */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 3, duration: 1 }}
-          className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-gray-500 text-xs"
-        >
-          © 2024 Sakthivel V. All rights reserved.
-        </motion.div>
+        {/* Footer Copyright */}
+        <div className="absolute bottom-6 text-slate-600 text-[10px] md:text-xs tracking-widest uppercase">
+         
+        </div>
       </div>
     );
   }
 
   return (
     <Router>
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <div className="min-h-screen bg-slate-900 text-white selection:bg-cyan-500/30">
         <AnimatePresence mode="wait">
           <motion.div
             key="app-content"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 1.5 }}
           >
             <Navbar />
             <Routes>

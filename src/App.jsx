@@ -8,7 +8,7 @@ import Contact from "./pages/Contact";
 import Project from "./pages/Projects";
 import Skills from "./pages/Skills";
 import Footer from "./pages/Footer";
-
+import Resume from "./pages/Resume";
 function App() {
   const [showSplash, setShowSplash] = useState(true);
   const [loadingProgress, setLoadingProgress] = useState(0);
@@ -180,6 +180,7 @@ function App() {
               <Route path="/project" element={<Project />} />
               <Route path="/skills" element={<Skills />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/resume" element={<Resume />} />
             </Routes>
             <Footer />
           </motion.div>

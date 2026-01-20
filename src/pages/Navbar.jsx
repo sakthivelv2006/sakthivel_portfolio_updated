@@ -18,8 +18,8 @@ const Navbar = () => {
   return (
     <nav className="fixed top-0 left-0 w-full bg-slate-900 text-white px-6 md:px-12 py-4 flex justify-between items-center shadow-lg z-50">
       {/* Brand */}
-      <h1 className="text-2xl font-bold text-cyan-400 tracking-wide">
-        Sakthivel<span className="text-yellow-400">.V</span>
+      <h1 className="text-2xl font-bold text-white tracking-wide">
+        Sakthivel<span className="text-white-400">.V</span>
       </h1>
 
       {/* Desktop Links */}

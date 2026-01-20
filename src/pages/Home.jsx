@@ -153,7 +153,7 @@ export default function Home() {
     starsRef.current = stars;
 
     const draw = () => {
-      ctx.fillStyle = "#0f172a"; 
+      ctx.fillStyle = "#000000"; 
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.save();
       ctx.translate(canvas.width / 2, canvas.height / 2);
@@ -221,9 +221,10 @@ export default function Home() {
           </motion.div>
 
           <div className="h-32 perspective-text">
-            <motion.h1
-              className="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-white to-purple-500 drop-shadow-[0_0_10px_rgba(34,211,238,0.5)]"
-            >
+           <motion.h1
+  className="text-4xl md:text-6xl font-black text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]"
+>
+
               {typed}
               <span className="inline-block w-1 h-10 bg-cyan-400 animate-pulse ml-1 align-middle" />
             </motion.h1>
@@ -307,11 +308,11 @@ export default function Home() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-           <h2 className="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">
+           <h2 className="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-white">
              Introduce Myself
            </h2>
            <p className="mt-6 text-slate-300 text-lg md:text-xl max-w-4xl mx-auto leading-relaxed font-light">
-             I am <span className="text-cyan-400 font-bold">Sakthivel V</span>, a passionate Full Stack Developer interested in developing <span className="text-purple-400 font-semibold">advanced integrations</span>, advanced security systems like <span className="text-pink-400 font-semibold">Multi-Factor Authentication</span>, and scalable multi-OS applications.
+             I am <span className="text-white font-bold">Sakthivel V</span>, a passionate Full Stack Developer interested in developing <span className="text-purple-400 font-semibold">advanced integrations</span>, advanced security systems like <span className="text-pink-400 font-semibold">Multi-Factor Authentication</span>, and scalable multi-OS applications.
            </p>
         </motion.div>
 

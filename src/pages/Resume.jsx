@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
 import { FaDownload, FaEye, FaFilePdf, FaExternalLinkAlt } from "react-icons/fa";
 
-// --- REUSABLE 3D TILT CARD COMPONENT ---
 const TiltCard = ({ children, className }) => {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -54,17 +53,16 @@ const TiltCard = ({ children, className }) => {
 };
 
 const Resume = () => {
-  // Canvas Refs for Starry Background
+
   const canvasRef = useRef(null);
   const rafRef = useRef(null);
   const starsRef = useRef([]);
 
-  // Google Drive File ID
+
   const fileId = "1X9LcFCQdhj-BdfzzDSvmlRBdZWr1q2Eo";
   const embedUrl = `https://drive.google.com/file/d/${fileId}/preview`;
   const viewUrl = `https://drive.google.com/file/d/${fileId}/view?usp=sharing`;
 
-  // Starry Background Logic
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
@@ -116,7 +114,6 @@ const Resume = () => {
   return (
     <div className="relative w-full min-h-screen bg-slate-900 text-white flex flex-col items-center overflow-x-hidden perspective-2000">
       
-      {/* --- BACKGROUND EFFECTS --- */}
       <canvas ref={canvasRef} className="fixed inset-0 w-full h-full pointer-events-none z-0 opacity-80" />
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <motion.div
@@ -149,7 +146,6 @@ const Resume = () => {
            </p>
         </motion.div>
 
-        {/* ACTION BUTTONS (Download / Open) */}
         <motion.div 
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -185,7 +181,6 @@ const Resume = () => {
             </TiltCard>
         </motion.div>
 
-        {/* PDF VIEWER CONTAINER (3D CARD) */}
         <motion.div 
            initial={{ opacity: 0, y: 50 }}
            animate={{ opacity: 1, y: 0 }}

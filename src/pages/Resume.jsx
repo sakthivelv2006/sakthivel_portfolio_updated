@@ -58,10 +58,11 @@ const Resume = () => {
   const rafRef = useRef(null);
   const starsRef = useRef([]);
 
+const fileId = "1m3kQ7pA-0XsegofQTI7iM-D4Or6xciy6";
 
-  const fileId = "1X9LcFCQdhj-BdfzzDSvmlRBdZWr1q2Eo";
-  const embedUrl = `https://drive.google.com/file/d/${fileId}/preview`;
-  const viewUrl = `https://drive.google.com/file/d/${fileId}/view?usp=sharing`;
+const embedUrl = `https://drive.google.com/file/d/${fileId}/preview`;
+
+const viewUrl = `https://drive.google.com/file/d/${fileId}/view`;
 
   useEffect(() => {
     const canvas = canvasRef.current;

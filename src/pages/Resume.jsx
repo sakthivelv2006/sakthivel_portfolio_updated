@@ -58,7 +58,7 @@ const Resume = () => {
   const rafRef = useRef(null);
   const starsRef = useRef([]);
 
-const fileId = "1m3kQ7pA-0XsegofQTI7iM-D4Or6xciy6";
+const fileId = "1ynchQh9Ofq4FAqAHkdvTYk68pciOpzkd";
 
 const embedUrl = `https://drive.google.com/file/d/${fileId}/preview`;
 
